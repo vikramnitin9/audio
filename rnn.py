@@ -1,0 +1,31 @@
+from keras.models import Sequential
+from keras.layers.core import Dense, Activation
+from keras.layers.recurrent import LSTM
+
+from sklearn.metrics import accuracy_score
+from sklearn.cross_validation import train_test_split
+
+from six.moves import cPickle
+
+input_neurons = 12
+hidden_neurons = 1292
+output_neurons = 1
+
+file = open("../data/data.pkl","rb")
+(X,y) = cPickle.load(file)
+
+X_train, y_train, X_test, y_test = train_test_split(X,y,test_size=0.3)
+
+model = Sequential()
+model.add(LSTM(input_neurons, hidden_neurons, return_sequences=False))
+model.add(Dense(hidden_neurons, output_neurons))
+model.add(Activation("relu"))
+model.compile(loss="mean_squared_error", optimizer="rmsprop")
+
+model.fit(X_train, y_train, batch_size=100, nb_epoch=10, validation_split=0.1)
+
+y_pred = model.predict(X_test)
+
+acc = accuracy_score(y_pred, y_test)
+
+print(acc)
