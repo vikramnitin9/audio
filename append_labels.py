@@ -1,11 +1,15 @@
 import numpy as np
 from six.moves import cPickle
 
-file = open("../data/M.pkl","rb")
+print("M loaded")
+
+file = open("data/M.pkl","rb")
 M_X = cPickle.load(file)
 file.close()
 
-file = open("../data/S.pkl","rb")
+print("S loaded")
+
+file = open("data/S.pkl","rb")
 S_X = cPickle.load(file)
 file.close()
 
@@ -14,10 +18,17 @@ S_y = np.ones([np.shape(S_X)[0],1])
 
 X = np.vstack([M_X, S_X])
 y = np.vstack([M_y, S_y])
-np.random.seed(42)
-np.random.shuffle(X)
-np.random.shuffle(y)
 
-file = open("../data/data.pkl","wb")
+print("Stacked")
+
+assert len(X) == len(y)
+
+p = np.random.permutation(len(X))
+X = X[p]
+y = y[p]
+
+print("Shuffled")
+print("Writing to file")
+file = open("data/chroma.pkl","wb")
 cPickle.dump((X,y),file,cPickle.HIGHEST_PROTOCOL)
 file.close()
