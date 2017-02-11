@@ -41,6 +41,7 @@ model.compile(loss="mean_squared_error", optimizer=sgd, metrics=['accuracy'])
 
 file = open("data/chroma.pkl","rb")
 (X,y) = cPickle.load(file)
+file.close()
 
 print("Loaded dataset");
 
@@ -54,13 +55,15 @@ pixel_mean = np.zeros([max_len,no_of_features])
 for i in range(0,num_train_samples):
     pixel_mean += (X_train[i]/num_train_samples)
 
+# file =  open("means.pkl", 'wb')
+# cPickle.dump(pixel_mean,file,cPickle.HIGHEST_PROTOCOL)
+# file.close()
+
 for i in range(0,num_train_samples):
     X_train[i] -= pixel_mean
 
 for i in range(0,num_test_samples):
     X_test[i] -= pixel_mean
-
-# print(X_train[0:5,0:5,:])
 
 X_train = X_train.reshape((num_train_samples,1,max_len,no_of_features))
 X_test = X_test.reshape((num_test_samples,1,max_len,no_of_features))
@@ -68,9 +71,10 @@ X_test = X_test.reshape((num_test_samples,1,max_len,no_of_features))
 print("Training set dimensions : ", np.shape(X_train))
 print("Training labels dimensions : ", np.shape(y_train))
 
-model.fit(X_train, y_train, batch_size=10, nb_epoch=20, validation_split=0.1)
+# model.fit(X_train, y_train, batch_size=10, nb_epoch=20, validation_split=0.1)
 
-model.save_weights('MS.h5')
+# model.save_weights('MS.h5')
+model.load_weights('MS.h5')
 
 score = model.evaluate(X_test, y_test, verbose=1)
 
